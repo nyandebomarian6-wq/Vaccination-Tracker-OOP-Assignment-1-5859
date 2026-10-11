@@ -53,7 +53,7 @@ data**, not real people.
 
 1. Install Python 3 from https://www.python.org
 2. Download `vaccination_tracker.py` from this repository.
-3. Open a terminal in that folder and run: py main.py
+3. Open a terminal in that folder and run:
 
 ```
 python vaccination_tracker.py
@@ -113,8 +113,13 @@ ID: VT-2026-0001 | Age: 1 | Clinic: Central Health Centre
 
 - `vaccination_tracker.py` - the full program
 - `README.md` - this file
+- `LICENSE` - MIT open-source license
 
 ## 8. Author
 
 Student, Limkokwing University of Creative Technology, Sierra Leone
 Lecturer: Amandus Benjamin Coker
+
+## 9. License
+
+This project is open-source under the MIT License. See the `LICENSE` file.
