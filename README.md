@@ -1,8 +1,11 @@
 # Vaccination Tracker
 
 **Course:** PROG211 Object-Oriented Programming 1 (Individual Assignment)
+
 **University:** Limkokwing University of Creative Technology, Sierra Leone
+
 **Domain:** Health - Vaccination Tracker
+
 **Language:** Python 3
 
 ## 1. What this project does
