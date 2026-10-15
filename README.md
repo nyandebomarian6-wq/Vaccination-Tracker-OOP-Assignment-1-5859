@@ -26,14 +26,14 @@ quickly see who still needs a dose.
 |---|---|---|---|
 | `Vaccine` | Describes one vaccine | `name`, `doses_needed` | `display_info()` |
 | `Patient` | One anonymous patient record | `patient_id`, `age`, `clinic`, `doses_received` | `receive_dose()`, `is_fully_vaccinated()`, `display_info()`, `display_status()` |
-| `VaccinationTracker` | The register that holds all patients | `name`, `patients` | `add_patient()`, `find_patient()`, `give_dose()`, `display_all()` |
+| `VaccinationTracker` | The register that holds all patients | `name`, `patients`, `vaccines` | `add_patient()`, `find_patient()`, `show_patient_list()`, `get_patient_by_number()`, `give_dose()`, `display_all()` |
 
 **Object interaction:** the tracker stores many `Patient` objects, and a
 `Patient` receives a dose by working with a `Vaccine` object.
 
 **Data structure:** one **dictionary** (`self.patients`) stores patients, with
 the patient ID as the key and the `Patient` object as the value.
-A **tuple** (`VACCINE_CATALOGUE`) holds the fixed list of vaccines offered.
+A **tuple** (`vaccines`, inside the `VaccinationTracker` class) holds the fixed list of vaccines offered.
 
 **Methods used**
 - Instance methods: `receive_dose()`, `is_fully_vaccinated()`, `display_status()`
@@ -45,7 +45,7 @@ A **tuple** (`VACCINE_CATALOGUE`) holds the fixed list of vaccines offered.
 | DPG principle | How this project follows it |
 |---|---|
 | **Open-source** | All source code is published openly on GitHub so anyone can use, study and improve it. |
-| **Inclusive and accessible design** | Simple numbered text menu, plain-language messages, clear error messages, and no internet or special hardware needed. |
+| **Inclusive and accessible design** | Simple numbered text menu, patients are chosen from a numbered list (no need to remember or type an ID), plain-language messages, clear error messages, and no internet or special hardware needed. |
 | **Privacy-respecting** | No names, phone numbers or home addresses are stored. Each patient has only an anonymous ID (for example `VT-2026-0001`), an age and a clinic. The program reminds the user not to type personal details. |
 | **Modular and reusable** | Each class does one job. `Vaccine`, `Patient` and `VaccinationTracker` can be reused or extended in other health programs. |
 
@@ -79,7 +79,7 @@ python vaccination_tracker.py
 Enter your choice (0-5):
 ```
 
-**Sample input:** `2` (give a dose), patient ID `VT-2026-0001`, vaccine `3`
+**Sample input:** `2` (give a dose), patient number `1` (from the numbered list, this is `VT-2026-0001`), vaccine `3`
 (Pentavalent), date `2026-10-01`
 
 **Sample output**
@@ -88,17 +88,17 @@ Enter your choice (0-5):
 Dose 2 of 3 given: Pentavalent on 2026-10-01
 ```
 
-**Sample input:** `3` (check status), patient ID `VT-2026-0001`
+**Sample input:** `3` (check status), patient number `1`
 
 **Sample output**
 
 ```
-Vaccination status for VT-2026-0001:
-  BCG            1/1  COMPLETE
-  Polio (OPV)    2/4  needs 2 more
-  Pentavalent    2/3  needs 1 more
-  Measles        0/2  needs 2 more
-  Yellow Fever   0/1  needs 1 more
+Status for VT-2026-0001:
+  BCG           1/1 COMPLETE
+  Polio (OPV)   2/4 needs 2 more
+  Pentavalent   2/3 needs 1 more
+  Measles       0/2 needs 2 more
+  Yellow Fever  0/1 needs 1 more
 ```
 
 **Sample input:** `4` (display all patients)
@@ -120,7 +120,8 @@ ID: VT-2026-0001 | Age: 1 | Clinic: Central Health Centre
 
 ## 8. Author
 
-Student, Limkokwing University of Creative Technology, Sierra Leone
+Marian Nyandebo, Limkokwing University of Creative Technology, Sierra Leone
+
 Lecturer: Amandus Benjamin Coker
 
 ## 9. License
