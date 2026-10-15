@@ -28,16 +28,6 @@ class Vaccine:
         print(f"Vaccine: {self.name} | Doses needed: {self.doses_needed}")
 
 
-# A tuple (cannot be changed) with the vaccines the clinic offers.
-VACCINES = (
-    Vaccine("BCG", 1),
-    Vaccine("Polio (OPV)", 4),
-    Vaccine("Pentavalent", 3),
-    Vaccine("Measles", 2),
-    Vaccine("Yellow Fever", 1),
-)
-
-
 class Patient:
     """One anonymous patient record."""
 
@@ -69,9 +59,9 @@ class Patient:
               f"Clinic: {self.clinic}")
         print(f"   Doses: {self.doses_received}")
 
-    def display_status(self):
+    def display_status(self, vaccines):
         print(f"Status for {self.patient_id}:")
-        for vaccine in VACCINES:
+        for vaccine in vaccines:
             given = self.doses_received.get(vaccine.name, 0)
             if self.is_fully_vaccinated(vaccine):
                 note = "COMPLETE"
@@ -101,12 +91,33 @@ class VaccinationTracker:
     def __init__(self, name):
         self.name = name
         self.patients = {}  # patient ID (key) -> Patient object (value)
+        # A tuple (cannot be changed) with the vaccines this clinic offers.
+        self.vaccines = (
+            Vaccine("BCG", 1),
+            Vaccine("Polio (OPV)", 4),
+            Vaccine("Pentavalent", 3),
+            Vaccine("Measles", 2),
+            Vaccine("Yellow Fever", 1),
+        )
 
     def add_patient(self, patient):
         self.patients[patient.patient_id] = patient
 
     def find_patient(self, patient_id):
         return self.patients.get(patient_id)
+
+    def show_patient_list(self):
+        """Prints every patient with a number, so users can pick by number."""
+        for number, patient in enumerate(self.patients.values(), start=1):
+            print(f"  {number}. {patient.patient_id} | Age: {patient.age} | "
+                  f"{patient.clinic}")
+
+    def get_patient_by_number(self, number):
+        """Returns the patient at this list number (1, 2, 3...) or None."""
+        for position, patient in enumerate(self.patients.values(), start=1):
+            if position == number:
+                return patient
+        return None
 
     def give_dose(self, patient_id, vaccine, date_given):
         patient = self.find_patient(patient_id)
@@ -132,34 +143,49 @@ def register_patient(tracker):
     clinic = input("Clinic name: ").strip() or "Unknown clinic"
     patient = Patient(Patient.generate_id(), int(age), clinic)
     tracker.add_patient(patient)
-    print(f"Patient registered. Their ID is {patient.patient_id}")
+    print(f"Patient registered. Number: {len(tracker.patients)} | "
+          f"ID: {patient.patient_id}")
+
+
+def choose_patient(tracker):
+    """Shows the numbered patient list and returns the patient chosen."""
+    if not tracker.patients:
+        print("No patients yet. Register a patient first.")
+        return None
+    print("Choose a patient:")
+    tracker.show_patient_list()
+    choice = input("Patient number: ").strip()
+    if not choice.isdigit():
+        print("Please type the patient number from the list.")
+        return None
+    patient = tracker.get_patient_by_number(int(choice))
+    if patient is None:
+        print("That number is not on the list.")
+    return patient
 
 
 def give_vaccine_dose(tracker):
     print("\n--- Give a vaccine dose ---")
-    patient_id = input("Patient ID (e.g. VT-2026-0001): ").strip().upper()
-    if tracker.find_patient(patient_id) is None:
-        print("Patient ID not found.")
+    patient = choose_patient(tracker)
+    if patient is None:
         return
-    for number, vaccine in enumerate(VACCINES, start=1):
+    for number, vaccine in enumerate(tracker.vaccines, start=1):
         print(f"  {number}. {vaccine.name} ({vaccine.doses_needed} dose(s))")
     choice = input("Vaccine number: ").strip()
-    if not (choice.isdigit() and 1 <= int(choice) <= len(VACCINES)):
+    if not (choice.isdigit() and 1 <= int(choice) <= len(tracker.vaccines)):
         print("Invalid vaccine number.")
         return
     date_given = input("Date (YYYY-MM-DD, Enter for today): ").strip()
     date_given = date_given or date.today().isoformat()
-    print(tracker.give_dose(patient_id, VACCINES[int(choice) - 1], date_given))
+    vaccine = tracker.vaccines[int(choice) - 1]
+    print(tracker.give_dose(patient.patient_id, vaccine, date_given))
 
 
 def check_status(tracker):
     print("\n--- Check vaccination status ---")
-    patient_id = input("Patient ID (e.g. VT-2026-0001): ").strip().upper()
-    patient = tracker.find_patient(patient_id)
-    if patient is None:
-        print("Patient ID not found.")
-    else:
-        patient.display_status()
+    patient = choose_patient(tracker)
+    if patient is not None:
+        patient.display_status(tracker.vaccines)
 
 
 def show_menu():
@@ -184,7 +210,7 @@ def add_sample(tracker, age, clinic, *doses):
 
 
 def load_sample_data(tracker):
-    bcg, polio, penta, measles, yellow = VACCINES
+    bcg, polio, penta, measles, yellow = tracker.vaccines
     add_sample(tracker, 1, "Central Health Centre",
                (bcg, "2026-01-10"), (polio, "2026-01-10"),
                (polio, "2026-02-14"), (penta, "2026-02-14"))
